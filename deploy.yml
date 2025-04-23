@@ -1,26 +1,29 @@
-name: Deploy Blazor to GitHub Pages
+name: Deploy Blazor PWA to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main  # Or 'master' if that’s your default branch
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: '8.0.x' # Use your .NET version
 
-      - name: Publish Blazor project
-        run: dotnet publish -c Release -o dist
+      - name: Publish Blazor WebAssembly
+        run: dotnet publish -c Release -o release /p:StaticWebAssetBasePath=/sousChefAi
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: dist/wwwroot
+          publish_dir: ./release/wwwroot
+          destination_dir: .
+          force_orphan: true
