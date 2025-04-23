@@ -1,0 +1,29 @@
+﻿@page "/ChefBot"
+@rendermode InteractiveServer
+
+@inject HttpClient Http
+
+<h3>ChefBot</h3>
+
+<h3>🍳 Ask your AI Chef</h3>
+
+<input @bind="userInput" placeholder="e.g. 2 cups in ml" class="input" />
+<button class="btn btn-primary" @onclick="AskAi">Click me</button>
+@if (!string.IsNullOrEmpty(response))
+{
+    <p><strong>Answer:</strong> @response</p>
+}
+
+@code {
+
+    string userInput;
+    string response;
+
+    private async Task AskAi()
+     {
+      
+         var res = await Http.PostAsJsonAsync("api/ai/ask", userInput);
+         response = await res.Content.ReadAsStringAsync();
+
+     }
+}
